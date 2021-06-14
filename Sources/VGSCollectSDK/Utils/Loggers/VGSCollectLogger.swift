@@ -14,6 +14,9 @@ public final class VGSCollectLogger {
 	/// Shared instance.
 	public static var shared = VGSCollectLogger()
 
+	/// no:doc
+	public static var loggerPrefix = "VGSCollectSDK"
+
 	/// Logging configuration. Check `VGSCollectLoggingConfiguration` for logging options.
 	public var configuration: VGSCollectLoggingConfiguration = VGSCollectLoggingConfiguration()
 
@@ -23,7 +26,7 @@ public final class VGSCollectLogger {
 	private var registeredLoggers = [VGSLogging]()
 
 	/// Thread safe container for registered loggers.
-	private let readWriteContainer: VGSReadWriteSafeContainer = VGSReadWriteSafeContainer(label: "VGSCollectSDK.Utils.Loggers")
+	private let readWriteContainer: VGSReadWriteSafeContainer = VGSReadWriteSafeContainer(label: "VGSSDK.Utils.Loggers" + UUID().uuidString)
 
 	// MARK: - Initialization
 
