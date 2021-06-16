@@ -17,6 +17,15 @@ public final class VGSCollectLogger {
 	/// no:doc
 	public static var loggerPrefix = "VGSCollectSDK"
 
+	/// no:doc
+	internal var loggerPrefix = "VGSCollectSDK" {
+		didSet {
+			requestLogger.loggerPrefix = loggerPrefix
+		}
+	}
+
+	internal var requestLogger = VGSCollectRequestLogger()
+
 	/// Logging configuration. Check `VGSCollectLoggingConfiguration` for logging options.
 	public var configuration: VGSCollectLoggingConfiguration = VGSCollectLoggingConfiguration()
 
@@ -31,7 +40,7 @@ public final class VGSCollectLogger {
 	// MARK: - Initialization
 
 	/// Private init for `VGSCollectLogger`.
-	private init() {
+	internal init() {
 		addLogger(VGSPrintingLogger())
 	}
 

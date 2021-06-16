@@ -11,6 +11,14 @@ import Foundation
 import UIKit
 #endif
 
+/// Update SKD with custom idenitifier.
+public struct VGSCollectOptions {
+
+	public var customIdentifier: String = ""
+
+	public var loggerConfiguration: VGSCollectLoggingConfiguration = VGSCollectLoggingConfiguration()
+}
+
 /// An object you use for observing `VGSTextField` `State` and send data to your organization vault.
 public class VGSCollect {
     internal let apiClient: APIClient
@@ -51,7 +59,11 @@ public class VGSCollect {
     public var textFields: [VGSTextField] {
       return storage.textFields
     }
-  
+
+		internal var collectOptions: VGSCollectOptions?
+
+		internal var logger: VGSCollectLogger
+
     // MARK: - Initialzation
     
     /// Initialzation.
@@ -61,11 +73,20 @@ public class VGSCollect {
     ///   - environment: `String` object, your organization vault environment with data region.(e.g. "live", "live-eu1", "sandbox").
     ///   - hostname: `String?` object, custom Hostname, if not set, data will be sent to Vault Url. Default is `nil`.
 	  ///   - satellitePort: `Int?` object, custom port for satellite configuration.  Default is `nil`. **IMPORTANT! Use only with .sandbox environment! Hostname should be specified for valid http://localhost or in local IP format  http://192.168.X.X**.
-    public init(id: String, environment: String, hostname: String? = nil, satellitePort: Int? = nil) {
+	public init(id: String, environment: String, hostname: String? = nil, satellitePort: Int? = nil, collectOptions: VGSCollectOptions? = nil) {
+			self.collectOptions = collectOptions
+			var logger = VGSCollectLogger.shared
+			if let options = collectOptions {
+				logger = VGSCollectLogger()
+				logger.loggerPrefix = options.customIdentifier
+			}
+
+			self.logger = logger
       self.tenantId = id
       self.regionalEnvironment = environment
       self.formAnalyticsDetails = VGSFormAnanlyticsDetails.init(formId: formId, tenantId: tenantId, environment: regionalEnvironment)
-      self.apiClient = APIClient(tenantId: id, regionalEnvironment: environment, hostname: hostname, formAnalyticsDetails: formAnalyticsDetails, satellitePort: satellitePort)
+
+		self.apiClient = APIClient(tenantId: id, regionalEnvironment: environment, hostname: hostname, formAnalyticsDetails: formAnalyticsDetails, satellitePort: satellitePort, logger: logger)
 
 			if case .satelliteURL = self.apiClient.hostURLPolicy {
 				self.formAnalyticsDetails.isSatelliteMode = true
@@ -80,9 +101,9 @@ public class VGSCollect {
     ///   - dataRegion: `String` object, id of data storage region (e.g. "eu-123").
     ///   - hostname: `String` object, custom Hostname, if not set, data will be sent to Vault Url. Default is `nil`.
 	  ///   - satellitePort: `Int?` object, custom port for satellite configuration. Default is `nil`. **IMPORTANT! Use only with .sandbox environment! Hostname should be specified for valid http://localhost or in local IP format http://192.168.X.X**.
-	public convenience init(id: String, environment: Environment = .sandbox, dataRegion: String? = nil, hostname: String? = nil, satellitePort: Int? = nil) {
+	public convenience init(id: String, environment: Environment = .sandbox, dataRegion: String? = nil, hostname: String? = nil, satellitePort: Int? = nil, collectOptions: VGSCollectOptions? = nil) {
       let env = Self.generateRegionalEnvironmentString(environment, region: dataRegion)
-      self.init(id: id, environment: env, hostname: hostname, satellitePort: satellitePort)
+      self.init(id: id, environment: env, hostname: hostname, satellitePort: satellitePort, collectOptions: collectOptions)
     }
 
     // MARK: - Manage VGSTextFields

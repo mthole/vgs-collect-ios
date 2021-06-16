@@ -9,13 +9,13 @@ import Foundation
 internal class VGSCollectRequestLogger {
 
 	/// no:doc
-	internal static var loggerPrefix = VGSCollectLogger.loggerPrefix
+	internal var loggerPrefix = VGSCollectLogger.loggerPrefix
 
 	/// Log sending request.
 	/// - Parameters:
 	///   - request: `URLRequest` object, request to send.
 	///   - payload: `VGSRequestPayloadBody` object, request payload.
-	internal static func logRequest(_ request: URLRequest, payload: JsonData?) {
+	internal func logRequest(_ request: URLRequest, payload: JsonData?) {
 
 		if !VGSCollectLogger.shared.configuration.isNetworkDebugEnabled {return}
 
@@ -37,7 +37,7 @@ internal class VGSCollectRequestLogger {
 	///   - data: `Data?` object of failed request.
 	///   - error: `Error?` object, request error.
 	///   - code: `Int` object, status code.
-	internal static func logErrorResponse(_ response: URLResponse?, data: Data?, error: Error?, code: Int) {
+	internal func logErrorResponse(_ response: URLResponse?, data: Data?, error: Error?, code: Int) {
 
 		if !VGSCollectLogger.shared.configuration.isNetworkDebugEnabled {return}
 
@@ -72,7 +72,7 @@ internal class VGSCollectRequestLogger {
 	///   - response: `URLResponse?` object.
 	///   - data: `Data?` object of success request.
 	///   - code: `Int` object, status code.
-	internal static func logSuccessResponse(_ response: URLResponse?, data: Data?, code: Int) {
+	internal func logSuccessResponse(_ response: URLResponse?, data: Data?, code: Int) {
 
 		if !VGSCollectLogger.shared.configuration.isNetworkDebugEnabled {return}
 
@@ -94,7 +94,7 @@ internal class VGSCollectRequestLogger {
 	/// Stringify URL.
 	/// - Parameter url: `URL?` to stringify.
 	/// - Returns: String representation of `URL` string or "".
-	private static func stringFromURL(_ url: URL?) -> String {
+	private func stringFromURL(_ url: URL?) -> String {
 		guard let requestURL = url else {return ""}
 		return requestURL.absoluteString
 	}
@@ -102,7 +102,7 @@ internal class VGSCollectRequestLogger {
 	/// Utility function to normalize request headers for logging.
 	/// - Parameter headers: `[String : String]`, request headers.
 	/// - Returns: `String` object, normalized headers string.
-	private static func normalizeRequestHeadersForLogs(_ headers: [String: String]) -> String {
+	private func normalizeRequestHeadersForLogs(_ headers: [String: String]) -> String {
 		let stringifiedHeaders = headers.map({return "  \($0.key) : \($0.value)"}).joined(separator: "\n  ")
 
 		return "[\n  \(stringifiedHeaders) \n]"
@@ -111,19 +111,19 @@ internal class VGSCollectRequestLogger {
 	/// Utility function to normalize response headers for logging.
 	/// - Parameter headers: `[AnyHashable : Any]`, response headers.
 	/// - Returns: `String` object, normalized headers string.
-	private static func normalizeHeadersForLogs(_ headers: [AnyHashable: Any]) -> String {
+	private func normalizeHeadersForLogs(_ headers: [AnyHashable: Any]) -> String {
 		let stringifiedHeaders = headers.map({return "  \($0.key) : \($0.value)"}).joined(separator: "\n  ")
 
 		return "[\n  \(stringifiedHeaders) \n]"
 	}
 
 	/// Limit string characters value to print.
-	private static var maxTextCountToPrintLimit: Int = 50000
+	private var maxTextCountToPrintLimit: Int = 50000
 
 	/// Stringify `JSON` for logging.
 	/// - Parameter vgsJSON: `VGSJSONData` object.
 	/// - Returns: `String` object, pretty printed `JSON`.
-	private static func stringifyJSONForLogs(_ vgsJSON: JsonData) -> String {
+	private func stringifyJSONForLogs(_ vgsJSON: JsonData) -> String {
 		if let json = try? JSONSerialization.data(withJSONObject: vgsJSON, options: .prettyPrinted) {
 			let stringToPrint = String(decoding: json, as: UTF8.self)
 			if stringToPrint.count > maxTextCountToPrintLimit {
@@ -139,7 +139,7 @@ internal class VGSCollectRequestLogger {
 	/// Stringify payload of `Any` type for logging.
 	/// - Parameter payload: `Any` paylod.
 	/// - Returns: `String` object, formatted stringified payload.
-	private static func stringifyRawRequestPayloadForLogs(_ payload: Any) -> String {
+	private func stringifyRawRequestPayloadForLogs(_ payload: Any) -> String {
 		if let json = payload as? JsonData {
 			return stringifyJSONForLogs(json)
 		}
